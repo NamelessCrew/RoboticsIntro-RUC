@@ -22,13 +22,13 @@ from mani_skill.utils.building.actors import build_cube
 class SO100Env(BaseEnv):
     """
     SO100 机械臂仿真环境
-    
+
     这是一个用于 SO100 5DOF 机械臂的基础仿真环境，
     支持关节位置控制和夹爪控制。
-    
+
     使用 ManiSkill 内置的 so100 机器人。
     """
-    
+
     SUPPORTED_ROBOTS = ["so100", "so100_custom"]
     SUPPORTED_REWARD_MODES = ["none"]
     # 模型顺序：5 个机械臂关节 + 1 个夹爪关节，单位均为弧度。
@@ -42,10 +42,10 @@ class SO100Env(BaseEnv):
         "side": ([0, -0.8, 0.4], [0, 0, 0]),  # 侧面视角：eye 与 target 一起调整
         "oblique": ([0.32, -0.44, 0.44], [0, -0.17, 0.17]),
     }
-    
+
     def __init__(
-        self, 
-        *args, 
+        self,
+        *args,
         robot_uids="so100",
         camera_preset="default",
         camera_eye=None,
@@ -88,7 +88,7 @@ class SO100Env(BaseEnv):
         self._add_cube = add_cube
         self._cube_collision = cube_collision
         super().__init__(*args, robot_uids=robot_uids, **kwargs)
-    
+
     @property
     def _default_sim_config(self):
         return SimConfig(
@@ -98,7 +98,7 @@ class SO100Env(BaseEnv):
                 max_rigid_patch_count=2**19,
             )
         )
-    
+
     @property
     def _default_sensor_configs(self):
         """配置默认相机传感器"""
@@ -114,17 +114,17 @@ class SO100Env(BaseEnv):
 
     def _get_camera_eye_target(self):
         return self._camera_eye, self._camera_target
-    
+
     @property
     def _default_human_render_camera_configs(self):
         """配置用于人类观看的渲染相机"""
         pose = sapien_utils.look_at([0.6, -0.6, 0.6], [0.0, 0.0, 0.15])
         return CameraConfig("render_camera", pose, 1024, 1024, 1, 0.01, 100)
-    
+
     def _load_agent(self, options: dict):
         """加载机器人代理"""
         super()._load_agent(options, sapien.Pose(p=[0, 0, 0]))
-    
+
     def _load_scene(self, options: dict):
         """加载场景（地面等）"""
         if self._ground_texture == "default":
@@ -163,7 +163,7 @@ class SO100Env(BaseEnv):
         self.scene.add_directional_light(self._light_direction, [1, 1, 1],
                                          shadow=self.enable_shadow, shadow_scale=5, shadow_map_size=2048)
         self.scene.add_directional_light([0, 0, -1], [1, 1, 1])
-    
+
     def _initialize_episode(self, env_idx: torch.Tensor, options: dict):
         """初始化每个 episode"""
         qpos = np.asarray(options.get("initial_qpos", self._initial_qpos), dtype=np.float32)
@@ -180,23 +180,23 @@ class SO100Env(BaseEnv):
             # 重置位置之外也要清零速度，否则方块会带着上一次的速度重新下落。
             self.cube.set_state(torch.tensor([[0.3, -0.2, 0.30, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
                                              device=self.device))
-    
+
     def evaluate(self):
         """评估当前状态（用于奖励计算）"""
         return {}
-    
+
     def _get_obs_extra(self, info: Dict):
         """获取额外的观测信息"""
         return dict()
-    
+
     def get_joint_positions(self) -> np.ndarray:
         """获取当前关节位置"""
         return self.agent.robot.get_qpos().cpu().numpy()
-    
+
     def get_joint_velocities(self) -> np.ndarray:
         """获取当前关节速度"""
         return self.agent.robot.get_qvel().cpu().numpy()
-    
+
     def get_ee_pose(self):
         """获取末端执行器位姿"""
         return self.agent.tcp_pose

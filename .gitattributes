@@ -1,0 +1,5 @@
+*.py text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+# Preserve upstream asset bytes, including URDF CRLF and source whitespace.
+chapters/week06/assets/so100/** -text -whitespace
