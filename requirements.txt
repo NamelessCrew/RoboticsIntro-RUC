@@ -1,0 +1,12 @@
+# Linux 的核心版本约束；macOS 使用完整的已验证锁定文件。
+# Linux 未在当前发布机器上验证，须先运行 scene，再运行 suite。
+mani-skill==3.0.1
+sapien==3.0.3
+gymnasium==1.4.0
+numpy==2.2.6
+torch==2.14.1
+torchvision==0.29.1
+imageio==2.38.0
+pillow==12.3.0
+transforms3d==0.4.2
+scipy==1.15.3

@@ -1,0 +1,249 @@
+{
+  "date": "2026-10-16",
+  "platform": "macOS arm64 / Apple M2 / Vulkan SDK 1.3.290.0",
+  "python": "3.10.19",
+  "fresh_environment_install": true,
+  "suite": {
+    "status": "passed",
+    "source_deck": "第六周_仿真平台_RoboticsIntro_课程仓库版.pptx",
+    "slide_count": 59,
+    "versions": {
+      "mani-skill": "3.0.1",
+      "sapien": "3.0.3",
+      "torch": "2.14.1"
+    },
+    "checks": {
+      "time": {
+        "slide": 9,
+        "status": "passed",
+        "velocity_m_s": 0.2,
+        "dt_s": 0.01,
+        "displacement_per_step_m": 0.002,
+        "steps": 100,
+        "elapsed_simulated_s": 1,
+        "displacement_m": 0.2,
+        "scope": "Arithmetic illustration assuming constant velocity, no gravity or collisions"
+      },
+      "official": {
+        "status": "passed",
+        "slide": 21,
+        "env_id": "PickCube-v1",
+        "steps": 30,
+        "control_mode": "pd_joint_delta_pos",
+        "action_shape": [
+          8
+        ],
+        "scope": "Official task creation, random steps and rendering; not grasp success"
+      },
+      "urdf": {
+        "status": "passed",
+        "slides": [
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37
+        ],
+        "joint": "shoulder_pan",
+        "original_xyz": [
+          0.0,
+          -0.0452,
+          0.0165
+        ],
+        "changed_xyz": [
+          0.0,
+          -0.0452,
+          0.0665
+        ],
+        "world_link_displacements": {
+          "Base": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "Rotation_Pitch": [
+            -9.167706593871117e-09,
+            7.450580596923828e-09,
+            0.050000015646219254
+          ],
+          "Upper_Arm": [
+            -9.167706593871117e-09,
+            7.450580596923828e-09,
+            0.05000000447034836
+          ],
+          "Lower_Arm": [
+            -9.080395102500916e-09,
+            0.0,
+            0.050000011920928955
+          ],
+          "Wrist_Pitch_Roll": [
+            -9.313225746154785e-09,
+            0.0,
+            0.050000011920928955
+          ],
+          "Fixed_Jaw": [
+            -9.313225746154785e-09,
+            0.0,
+            0.05000004172325134
+          ],
+          "Moving_Jaw": [
+            -9.313225746154785e-09,
+            0.0,
+            0.05000004172325134
+          ],
+          "Fixed_Jaw_tip": [
+            -9.313225746154785e-09,
+            0.0,
+            0.05000004172325134
+          ],
+          "Moving_Jaw_tip": [
+            -9.313225746154785e-09,
+            0.0,
+            0.05000004172325134
+          ]
+        },
+        "original_file_preserved": true,
+        "note": "SO100 shoulder_pan: z = 0.0165 m + 0.05 m = 0.0665 m; see slide 36."
+      },
+      "reset_step": {
+        "status": "passed",
+        "slides": [
+          8,
+          11,
+          41,
+          42,
+          49
+        ],
+        "initial": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6000000238418579
+        ],
+        "after_step": [
+          0.29999780654907227,
+          -1.258580045737645e-12,
+          4.838343701379921e-12,
+          -1.8053180478316833e-11,
+          -1.0663938265417783e-12,
+          0.5999996066093445
+        ],
+        "after_reset": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.6000000238418579
+        ],
+        "new_initial": [
+          0.30000001192092896,
+          -0.800000011920929,
+          0.800000011920929,
+          0.0,
+          0.20000000298023224,
+          0.0
+        ],
+        "steps": 40,
+        "simulation_hz": 100,
+        "control_hz": 20,
+        "physical_substeps_per_action": 5
+      },
+      "compare": {
+        "status": "passed",
+        "slides": [
+          43,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          54,
+          58
+        ],
+        "checks": {
+          "camera_rgb_mean_absolute_difference": 13.707722981770834,
+          "texture_rgb_mean_absolute_difference": 45.199198404947914,
+          "lighting_rgb_mean_absolute_difference": 11.0101318359375,
+          "fov60_rgb_mean_absolute_difference": 26.188212076822918,
+          "qpos_rgb_mean_absolute_difference": 0.9939982096354166
+        },
+        "texture_preserves_friction": true,
+        "visual_settings_preserve_robot_state": true,
+        "human_and_viewer_settings_preserve_sensor_image": true,
+        "fov_focal_length_ratio": 1.732050895690918,
+        "resolution_pixel_ratio": 4,
+        "baseline_mean_brightness": 85.17303466796875,
+        "dark_mean_brightness": 74.16290283203125,
+        "panda_qpos_size": 9,
+        "panda_action_size": 8,
+        "cases": [
+          "baseline",
+          "camera",
+          "side_camera",
+          "texture",
+          "lighting",
+          "fov60",
+          "resolution256",
+          "qpos",
+          "human_camera",
+          "viewer_camera",
+          "panda",
+          "exercise_baseline",
+          "exercise_texture",
+          "exercise_camera",
+          "exercise_final"
+        ]
+      },
+      "cube_drop": {
+        "status": "passed",
+        "slides": [
+          5,
+          6,
+          10,
+          12,
+          29,
+          37,
+          55,
+          56
+        ],
+        "cube_side_m": 0.04,
+        "gravity": [
+          0,
+          0,
+          -9.81
+        ],
+        "ground_z_m": 0,
+        "expected_center_z_m": 0.02,
+        "tolerance_m": 0.002,
+        "trials": {
+          "collision_on": {
+            "initial_center_z_m": 0.30000001192092896,
+            "final_center_z_m": 0.019999876618385315,
+            "reset_center_z_m": 0.30000001192092896,
+            "steps": 80,
+            "simulation_seconds": 4.0
+          },
+          "collision_off": {
+            "initial_center_z_m": 0.30000001192092896,
+            "final_center_z_m": -1.4952298402786255,
+            "reset_center_z_m": 0.30000001192092896,
+            "steps": 12,
+            "simulation_seconds": 0.6
+          }
+        }
+      }
+    }
+  }
+}
