@@ -21,7 +21,9 @@
 | --- | --- | --- |
 | macOS Apple Silicon | 已在 Apple M2 上验证 | Python 3.10、uv、Vulkan SDK / MoltenVK |
 | Linux | 提供安装路径，当前发布未实机验证 | Python 3.10、uv、可用的 Vulkan 显卡驱动 |
-| Windows / WSL | 当前版本未验证 | 建议使用课程提供的 Linux 机器，不把 WSL 等同于已验证环境 |
+| Windows / WSL | 当前版本未验证 | 需确认系统、显卡及 Vulkan 渲染支持，具体见下方官方说明 |
+
+具体硬件与操作系统支持情况请参考 [ManiSkill 官方 System Support](https://maniskill.readthedocs.io/en/latest/user_guide/getting_started/installation.html#system-support)。本课需要 CPU 仿真和图像渲染，请重点核对其中的 **CPU Sim** 和 **Rendering** 两列。
 
 本课固定为 **单环境、CPU 物理仿真**。图像仍需要可用的 Vulkan 渲染设备；不加 `--human` 只是不开交互窗口，仍会渲染图片。macOS 的 GPU 物理仿真不在本课范围内，平台说明见 [ManiSkill macOS 安装文档](https://maniskill.readthedocs.io/en/latest/user_guide/getting_started/macos_install.html)。
 
