@@ -12,6 +12,17 @@
 python run.py grasp --release-check
 ```
 
+要在窗口中实时看完整动作：
+
+```text
+python run.py grasp --human
+python run.py grasp --human --release-check
+python run.py vision-grasp --human
+python run.py grasp --human --speed 0.5
+```
+
+Windows 把 `python` 换为 `py -3.11`；macOS 的 `run.py` 自动使用 `mjpython`。每个实际控制步都会同步窗口，默认1倍速，可用正数 `--speed` 调整（0.5半速、2两倍速）。图像保存和硬件性能可能使实际速度低于设定值。任务完成后画面保留2秒；提前关闭窗口会停止任务、释放资源，并写 `status=aborted`、`success=false`。若只看已知位置窗口，可用 `grasp --human --no-render` 关闭图片/GIF保存；vision仍需渲染RGB-D。
+
 程序先让物体在地面上稳定 0.5 s，再通过仿真位置 API 获取物体中心，执行：
 
 1. 夹爪张开，移动到物体中心上方 0.16 m。

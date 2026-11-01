@@ -16,10 +16,11 @@ def orientation_error(current, target):
 
 
 class CartesianController:
-    def __init__(self, env):
+    def __init__(self, env, on_step=None):
         if env.robot != "panda":
             raise ValueError("Week07 controller requires Panda")
         self.env = env
+        self.on_step = on_step
         self.ik_data = mujoco.MjData(env.model)  # IK 的虚拟状态，不写实际物理状态。
         self.rotation = env.data.site("tcp").xmat.reshape(3, 3).copy()
         self.site_id = env.model.site("tcp").id
@@ -56,10 +57,15 @@ class CartesianController:
     def move_to(self, xyz, gripper_open):
         q = self.inverse_kinematics(xyz)
         # 位置PD执行器会通过力矩驱动关节，物体始终只由接触力/重力驱动。
-        self.env.step(np.r_[q, 255. if gripper_open else 0.])
+        self._step(np.r_[q, 255. if gripper_open else 0.])
 
     def hold(self, gripper_open):
-        self.env.step(np.r_[self.qtarget, 255. if gripper_open else 0.])
+        self._step(np.r_[self.qtarget, 255. if gripper_open else 0.])
+
+    def _step(self, action):
+        self.env.step(action)
+        if self.on_step is not None:
+            self.on_step()
 
 
 def bilateral_contacts(env, min_force=.01):

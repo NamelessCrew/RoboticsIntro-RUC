@@ -49,6 +49,8 @@ python3 run.py vision-grasp
 | Windows x64 | 已提供原生 Python / cmd / PowerShell 入口与 CI 配置；当前机器未实测 |
 | Linux x64 | 已提供原生入口与 CI 配置；当前机器未实测 |
 
+实时观看完整抓取：`python run.py grasp --human`；视觉抓取用 `python run.py vision-grasp --human`。两者默认按实时速度显示接近、下降、闭合、抬升与保持；`--release-check` 再演示松手下落。`--speed 0.5` 半速，`--speed 2` 两倍速。任务结束后最终画面停留2秒；过程中关闭窗口会中止，并将结果标记为 `aborted`、`success=false`。已知位置只看窗口可加 `--no-render`，省去图片/GIF保存；视觉抓取仍需要RGB-D渲染。
+
 交互查看：`python run.py scene --human --seconds 30`。Windows 可把 `python` 替换成 `py -3.11`；macOS 运行器会自动调用 `mjpython`，满足 MuJoCo 查看器的主线程要求。关闭窗口或到时退出。课上主要结果是保存的图像与数据，交互窗口验证单独记在验证记录中。
 
 ## 两周实验

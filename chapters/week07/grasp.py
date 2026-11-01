@@ -1,5 +1,6 @@
 """原生 MuJoCo Panda 方块抓取：known→规划→控制；vision 只替换目标位置来源。"""
 import argparse
+import math
 from pathlib import Path
 
 import mujoco
@@ -12,6 +13,7 @@ from chapters.week06.scene import RobotEnv
 from .planner import LinearPlanner, PlannerConfig
 from .controller import CartesianController, bilateral_contacts
 from .perception import locate_red_cube
+from .live_viewer import LiveViewer, ViewerClosed
 
 
 def make_env(cube_xy=(.45, 0), cube_friction=1.):
@@ -47,7 +49,19 @@ def evaluate(env, initial_z, hold_records=None):
             "success": bool(grasped and lifted >= .06 and hold["stable_hold"])}
 
 
-def run_task(mode="known", output=None, render=True, cube_xy=(.45, 0), release_check=False, close_gripper=True):
+def run_task(mode="known", output=None, render=True, cube_xy=(.45, 0), release_check=False, close_gripper=True, human=False, speed=1.):
+    output = Path(output or ROOT/"outputs/week07"/mode)
+    try:
+        return _run_task(mode, output, render, cube_xy, release_check, close_gripper, human, speed)
+    except ViewerClosed:
+        result = {"status": "aborted", "success": False, "reason": "viewer_closed", "mode": mode,
+                  "rendered": render, "human": human, "speed": speed}
+        save_json(output/"result.json", result)
+        print("窗口已关闭，任务已中止；result.json 标记为 aborted，未报告抓取成功。", flush=True)
+        return result
+
+
+def _run_task(mode, output, render, cube_xy, release_check, close_gripper, human, speed):
     if mode not in ("known", "vision"):
         raise ValueError("mode must be known or vision")
     if mode == "vision" and not render:
@@ -55,8 +69,8 @@ def run_task(mode="known", output=None, render=True, cube_xy=(.45, 0), release_c
     output = Path(output or ROOT/"outputs/week07"/mode)
     output.mkdir(parents=True, exist_ok=True)
     rows, frames, hold_records = [], [], []
-    with make_env(cube_xy) as env:
-        controller = CartesianController(env)
+    with make_env(cube_xy) as env, LiveViewer(env, enabled=human, speed=speed) as live:
+        controller = CartesianController(env, on_step=live.after_step if human else None)
         planner = LinearPlanner(PlannerConfig(dt=1/env.control_hz, speed=.08))
         for _ in range(25):
             controller.hold(True)
@@ -123,7 +137,7 @@ def run_task(mode="known", output=None, render=True, cube_xy=(.45, 0), release_c
             hold_records.append(record("hold"))
         snapshot(env, output/"05_lifted", render)
         evaluation = evaluate(env, initial[2], hold_records)
-        evaluation.update(mode=mode, localization=detection, rendered=render,
+        evaluation.update(status="completed", mode=mode, localization=detection, rendered=render, human=human, speed=speed,
                           hold_duration_s=1., object_constraint="freejoint; contact and gravity only",
                           mujoco=mujoco.__version__, cube_initial_xyz_m=initial.tolist())
         if release_check:
@@ -144,14 +158,24 @@ def run_task(mode="known", output=None, render=True, cube_xy=(.45, 0), release_c
         if frames:
             frames[0].save(output/"grasp.gif", save_all=True, append_images=frames[1:], duration=100, loop=0)
         print(f"{mode}: success={evaluation['success']}, lift={evaluation['lift_distance_m']:.4f} m, bilateral={evaluation['bilateral_contact_fraction']:.2f}", flush=True)
+        live.finish()
         return evaluation
+
+
+def positive_speed(value):
+    speed = float(value)
+    if not math.isfinite(speed) or speed <= 0:
+        raise argparse.ArgumentTypeError("speed must be positive and finite")
+    return speed
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=["known", "vision"], default="known")
     parser.add_argument("--output", type=Path)
-    parser.add_argument("--no-render", action="store_true")
+    parser.add_argument("--no-render", action="store_true", help="不保存图片/GIF；不影响 --human 实时窗口")
+    parser.add_argument("--human", action="store_true", help="实时显示整个物理抓取；关闭窗口中止")
+    parser.add_argument("--speed", type=positive_speed, default=1., help="实时窗口播放速度，默认1；0.5为半速，2为两倍速")
     parser.add_argument("--cube-x", type=float, default=.45)
     parser.add_argument("--cube-y", type=float, default=0.)
     parser.add_argument("--release-check", action="store_true", help="成功后打开夹爪，验证物体会自然落下")
@@ -159,7 +183,9 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.no_render and args.mode == "vision":
         parser.error("vision requires rendering")
-    result = run_task(args.mode, args.output, not args.no_render, (args.cube_x, args.cube_y), args.release_check, not args.keep_open)
+    result = run_task(args.mode, args.output, not args.no_render, (args.cube_x, args.cube_y), args.release_check, not args.keep_open, args.human, args.speed)
+    if result.get("status") == "aborted":
+        return result
     if result["success"] == args.keep_open:
         raise SystemExit("Unexpected grasp outcome; inspect result.json")
     return result
