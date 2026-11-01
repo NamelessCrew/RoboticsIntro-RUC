@@ -9,3 +9,4 @@ glfw==2.11.0
 PyOpenGL==3.1.10
 typing_extensions==4.16.0
 zipp==4.1.2
+imageio-ffmpeg==0.6.0

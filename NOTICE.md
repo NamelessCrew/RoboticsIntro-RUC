@@ -11,3 +11,5 @@
 - `docs/images/` 是本课程程序的真实运行截图/动画；模型目录中的 `panda.png` 是保留的上游说明图，两者来源不同。
 
 第三方模型许可证不自动覆盖全部课程材料。
+
+MP4编码使用 [imageio-ffmpeg](https://github.com/imageio/imageio-ffmpeg)（BSD-2-Clause），其平台wheel包含FFmpeg可执行文件；相关版权与许可证随依赖包保留。

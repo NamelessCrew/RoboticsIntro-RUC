@@ -21,7 +21,7 @@ python run.py vision-grasp --human
 python run.py grasp --human --speed 0.5
 ```
 
-Windows 把 `python` 换为 `py -3.11`；macOS 的 `run.py` 自动使用 `mjpython`。每个实际控制步都会同步窗口，默认1倍速，可用正数 `--speed` 调整（0.5半速、2两倍速）。图像保存和硬件性能可能使实际速度低于设定值。任务完成后画面保留2秒；提前关闭窗口会停止任务、释放资源，并写 `status=aborted`、`success=false`。若只看已知位置窗口，可用 `grasp --human --no-render` 关闭图片/GIF保存；vision仍需渲染RGB-D。
+Windows 把 `python` 换为 `py -3.11`；macOS 的 `run.py` 自动使用 `mjpython`。每个实际控制步都会同步窗口，默认1倍速，可用正数 `--speed` 调整（0.5半速、2两倍速）。图像保存和硬件性能可能使实际速度低于设定值。任务完成后画面保留2秒；提前关闭窗口会停止任务、释放资源，并写 `status=aborted`、`success=false`。只看窗口不存视频可加 `--no-video`；已知位置也可用 `--no-render`，vision仍需渲染RGB-D。
 
 程序先让物体在地面上稳定 0.5 s，再通过仿真位置 API 获取物体中心，执行：
 
@@ -32,7 +32,7 @@ Windows 把 `python` 换为 `py -3.11`；macOS 的 `run.py` 自动使用 `mjpyth
 5. 保持 1 s，记录物体高度、双指接触力、运动速度与相对夹爪位置。
 6. 使用 `--release-check` 时打开夹爪，再观察 2 s；物体应自然落地。
 
-先看 `outputs/week07/known/result.json`，再看 `01_initial` 到 `05_lifted` 的图片、RGB-D 数组和 `grasp.gif`。结果不是由画面主观判断：`success` 为真需要物体真的被接触力抬起并保持。
+先看 `outputs/week07/known/grasp.mp4` 与 `result.json`。默认生成一段完整MP4（H.264、10fps），另保留标定、定位与数值轨迹，不生成GIF或阶段截图。需要教学截图与RGB-D数组时使用 `python run.py grasp --save-images`，视觉检测图同样由 `vision-grasp --save-images` 开启。结果不是由画面主观判断：`success` 为真需要物体真的被接触力抬起并保持。
 
 ![真实物理抓取后抬起](images/grasp_lifted.png)
 
@@ -54,7 +54,7 @@ IK 得到关节目标后，`env.step()` 使用原生 Panda 位置 PD 执行器�
 
 ## 3. 阅读轨迹与误差
 
-`trajectory.json` 每个控制步记录：阶段、仿真时刻、规划 TCP 目标、实际 TCP、物体世界位置、qpos、ctrl、物体速度和两指接触法向力。`trajectory.npz` 为常用数值数组，适合学生画图；`scene.xml` 是当前机器可调试的场景快照。
+`trajectory.json` 每个控制步记录：阶段、仿真时刻、规划 TCP 目标、实际 TCP、物体世界位置、qpos、ctrl、物体速度和两指接触法向力。`trajectory.npz` 为常用数值数组，适合学生画图；使用 `--save-images` 时阶段目录还包含当前机器可调试的 `scene.xml`。MP4按仿真时间每0.1s采样，窗口倍速不改变视频时长。初始稳定与可选释放阶段也记录在视频和轨迹中。
 
 规划误差、IK 残差、动力学跟踪误差是不同量。默认运行段末 TCP 误差约 5–6 mm，主要来自有限增益与重力下的动态追踪；不应把微小的理想 RGB-D 定位误差等同于最终抓取精度。
 
@@ -80,7 +80,7 @@ python run.py vision-grasp --cube-x 0.43 --cube-y 0.025 --output outputs/week07/
 
 ![从 RGB 中提取红色方块](images/grasp_detection.png)
 
-标定保存于 `calibration.json`；掩码边框、像素数、表面位置、半高先验与中心误差在 `localization.json`。`detection.png` 的绿色框只标示颜色掩码包围盒。
+标定保存于 `calibration.json`；掩码边框、像素数、表面位置、半高先验与中心误差在 `localization.json`。添加 `--save-images` 后，`detection.png` 的绿色框只标示颜色掩码包围盒；默认仅保存定位JSON。
 
 本 detector 是**受控颜色分割**，不是 YOLO，也没有训练权重或语义类别理解。假设目标是唯一红色、平放、未遮挡且高度已知的方块；俯视可见顶面。任意物体、多个红块、倾倒方块、侧视相机、深度噪声和遮挡需要新的检测/几何估计。理想仿真下数微米到毫米级的数值误差不代表真实相机精度。
 
@@ -109,9 +109,11 @@ python run.py test
 
 ## 6. 课堂任务与提交
 
-- 基础：运行 known，提交 `result.json`、初始/闭合/抬升图和一张 TCP/物体 z 曲线；说明 planner 与 controller 各自负责什么。
-- 视觉：移动到 [0.43,0.025]，提交定位图、标定、误差和抓取结果；解释“表面点→物体中心”的半高补偿。
+- 基础：运行 known（需要截图时加 `--save-images`），提交 `result.json`、初始/闭合/抬升图和一张 TCP/物体 z 曲线；说明 planner 与 controller 各自负责什么。
+- 视觉：加 `--save-images`，移动到 [0.43,0.025]，提交定位图、标定、误差和抓取结果；解释“表面点→物体中心”的半高补偿。
 - 对照：保持夹爪张开，再运行释放检查，解释两者为何不同。
 - 修改：在小范围内调整线性轨迹速度或抓取高度，每次仅改变一项，记录跟踪误差、接触与成功率。偏离示例工作区应检查碰撞与 IK，不把失败归因于“模型太慢”。
 
 进阶可换成香蕉模型与语义检测器，但须补充合法网格、碰撞/惯量、可达抓取姿态、类别与权重来源、检测误差与接触稳定性验证。教材 YOLO 香蕉例子在本分支中作为扩展阅读，未交付香蕉/YOLO 运行结果。
+
+视频通过固定版本 imageio-ffmpeg 的随包编码器流式保存，无需安装系统FFmpeg。正常完成得到 `grasp.mp4`；窗口中止或异常时编码器仍会关闭，部分视频保留为 `grasp.partial.mp4`，`result.json.video.status` 明确标记。建议使用新的 `--output` 目录；旧GIF/PNG不会被清理。若不需要视频，可对known或vision使用 `--no-video`，数值数据仍保存。

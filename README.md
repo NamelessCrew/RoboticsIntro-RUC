@@ -49,7 +49,7 @@ python3 run.py vision-grasp
 | Windows x64 | 已提供原生 Python / cmd / PowerShell 入口与 CI 配置；当前机器未实测 |
 | Linux x64 | 已提供原生入口与 CI 配置；当前机器未实测 |
 
-实时观看完整抓取：`python run.py grasp --human`；视觉抓取用 `python run.py vision-grasp --human`。两者默认按实时速度显示接近、下降、闭合、抬升与保持；`--release-check` 再演示松手下落。`--speed 0.5` 半速，`--speed 2` 两倍速。任务结束后最终画面停留2秒；过程中关闭窗口会中止，并将结果标记为 `aborted`、`success=false`。已知位置只看窗口可加 `--no-render`，省去图片/GIF保存；视觉抓取仍需要RGB-D渲染。
+实时观看完整抓取：`python run.py grasp --human`；视觉抓取用 `python run.py vision-grasp --human`。两者默认按实时速度显示接近、下降、闭合、抬升与保持；`--release-check` 再演示松手下落。`--speed 0.5` 半速，`--speed 2` 两倍速。任务结束后最终画面停留2秒；过程中关闭窗口会中止，并将结果标记为 `aborted`、`success=false`。只看窗口可加 `--no-video`；已知位置也可用 `--no-render` 关闭媒体渲染。视觉抓取仍需RGB-D。
 
 交互查看：`python run.py scene --human --seconds 30`。Windows 可把 `python` 替换成 `py -3.11`；macOS 运行器会自动调用 `mjpython`，满足 MuJoCo 查看器的主线程要求。关闭窗口或到时退出。课上主要结果是保存的图像与数据，交互窗口验证单独记在验证记录中。
 
@@ -89,7 +89,9 @@ python3 run.py vision-grasp
 - `observations.npz`：`rgb` 与 **`depth_m`（米）**；MuJoCo 深度是沿光轴的 z，不沿射线量距离。本分支不使用旧代码的毫米深度。
 - `result.json`：机器人维数、关节与相机参数、物理参数或抓取评价；失败进程返回非零。
 - `scene.xml`：运行时 MJCF，网格路径指向本机资源；用于本机调试。跨电脑分享应提交源代码和资源后重新生成。
-- 抓取另保存 `calibration.json`、`localization.json`（vision）、`detection.png`、`trajectory.json` / `.npz`、`grasp.gif` 与各阶段 RGB-D。
+- 抓取默认只保存一段 `grasp.mp4`，以及 `result.json`、`calibration.json`、`localization.json`（vision）和 `trajectory.json` / `.npz`。视频为H.264、10fps，包含初始稳定、接近、下降、闭合、抬升、保持及可选释放；按仿真时间采样，不受窗口 `--speed` 影响。逐帧编码，不在内存积累整段图像。
+- 抓取默认不生成GIF、阶段目录或PNG。教学需要时加 `--save-images` 才额外保存阶段截图、RGB-D与 `detection.png`；`--no-video` 可关闭MP4。出错/中止时已写入的视频以 `grasp.partial.mp4` 保留，并在JSON中明确标记。编码器由固定版本 `imageio-ffmpeg` wheel提供，无需单独安装FFmpeg。
+- 建议用新的 `--output outputs/week07/video_try1` 查看简洁输出；复用旧目录时原有GIF/PNG不会被删除。
 
 Panda 有 **9 个 qpos**（7 个臂关节 rad＋2 个手指位移 m）与 **8 路 action**（前 7 项绝对关节角 rad，最后一项 0–255 夹爪开度命令）。SO100 有 6 个 qpos / action（5 个臂关节＋1 个旋转夹爪，均为 rad）。动作不是速度或“每步增加量”。物理 500 Hz、控制 50 Hz，一次 `step` 推进 10 个物理小步，即 0.02 s。
 
@@ -106,7 +108,7 @@ Panda 有 **9 个 qpos**（7 个臂关节 rad＋2 个手指位移 m）与 **8 �
 | OpenGL / CGL / GLFW 错误或远程无显示 | 先运行 `doctor` 与 `suite --no-render` / `grasp --no-render` 检查物理；本机桌面再运行图片实验。Linux 无显示服务可按官方文档配置 EGL/OSMesa |
 | Windows 只有基础显示驱动 | 安装显卡厂商提供的 OpenGL 驱动后重试 `scene` |
 | macOS 提示 `mjpython` | 通过 `run.py ... --human` 启动，不直接从普通 Python 调用查看器 |
-| RGB-D 未找到红块 | 检查 `01_initial/sensor_rgb.png` 的可见性、颜色、深度及掩码；该检测器限单个红色平放方块 |
+| RGB-D 未找到红块 | 加 `--save-images` 重跑，检查 `01_initial/sensor_rgb.png` 的可见性、颜色、深度及掩码；该检测器限单个红色平放方块 |
 | IK 不可达或跟踪误差过大 | 先恢复默认物体位置，查看轨迹；线性规划器不避障，不支持任意工作空间目标 |
 
 `--no-render` 跳过图像，报告会标明 `rendered=false`，不能据此判断视觉功能通过。`vision-grasp --no-render` 会明确报错。测试不需要图形设备；视觉抓取和课程图片需要。

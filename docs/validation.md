@@ -74,3 +74,11 @@ macOS `scene --human --seconds 2` 经 `mjpython` 打开查看器并自动退出�
 当前 CGL 驱动提示 `ARB_clip_control unavailable ... depth accuracy will be limited`；图片/反投影/定位与抓取验证仍通过。误差数据来自这个后端，应保留该精度限制说明。受限沙箱无法建立 CGL 上下文，本次渲染在允许访问本机图形设备的执行环境完成。
 
 Windows / Linux 和 Python 3.12 **未在本次实机执行**。已提供原生脚本和 GitHub Actions：三系统×两Python版本的物理测试，以及 Linux Xvfb 图像/视觉抓取。当前未推送、未运行远端 CI；配置存在不代表这些平台已验证。任意物体/姿态、碰撞规划、真实硬件、香蕉资产和 YOLO 都不在当前验收结果中。
+
+## 后续：默认MP4输出验证
+
+第七周默认输出已改为 `grasp.mp4`，不再生成GIF或阶段图片；历史验证图片保留。新增 `--save-images` 与 `--no-video`。固定依赖 `imageio-ffmpeg==0.6.0` 的平台wheel包含编码器。流式写H.264、512×512、10fps，按仿真时间采样，不受窗口倍速影响。
+
+2026-11-01 实际运行：`grasp --release-check --output outputs/week07/mp4-known` 得到137帧、13.7秒、393259字节；`vision-grasp --output outputs/week07/mp4-vision` 得到116帧、11.6秒、381640字节。已解码全部帧并检查首/末帧，fresh目录仅有MP4和数值JSON/NPZ，无PNG/GIF/阶段目录。两种抓取仍成功。`vision-grasp --no-video --save-images` 已验证可单独保留教学图。原有目录中的旧图不会被删除。
+
+本次只运行相关检查：2项真实小视频编解码/采样/异常关闭测试、3项实时窗口测试、5项物理测试通过。独立Astra复核全部解码、时间轴与无图默认目录，并模拟关闭窗口验证 `aborted / success=false`、可播放 `grasp.partial.mp4`、无完整MP4和部分数值轨迹。编码异常/中止均关闭进程，结果JSON明确标记视频状态。
