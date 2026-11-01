@@ -1,5 +1,5 @@
-"""最小课堂入口：与 bash run.sh scene 调用同一个场景。"""
+"""最小示例：python -m chapters.week06.hello_robot。"""
 from .experiments import main
 
 if __name__ == "__main__":
-    main()
+    main(["scene"])

@@ -1,0 +1,485 @@
+{
+  "date": "2026-11-01",
+  "branch": "RoboticsIntro-RUC-mujoco",
+  "environment": {
+    "os": "macOS 26.5.1",
+    "architecture": "arm64",
+    "python": "3.11.14",
+    "mujoco": "3.3.7",
+    "numpy": "2.3.4",
+    "pillow": "11.3.0"
+  },
+  "clean_install": "passed",
+  "pip_check": "passed",
+  "tests": {
+    "status": "passed",
+    "count": 11,
+    "command": "python3 run.py test"
+  },
+  "week06": {
+    "status": "passed",
+    "mujoco": "3.3.7",
+    "rendered": true,
+    "experiments": {
+      "time": {
+        "status": "passed",
+        "dt_s": 0.002,
+        "steps": 500,
+        "duration_s": 1,
+        "velocity_m_s": 0.2,
+        "final_position_m": 0.20000000000000162
+      },
+      "reset_step": {
+        "status": "passed",
+        "before": [
+          0.0,
+          -0.7854,
+          0.0,
+          -2.3562,
+          0.0,
+          1.5708,
+          0.7854,
+          0.04,
+          0.04
+        ],
+        "after": [
+          0.29999999949103723,
+          -0.7845025788426868,
+          0.00018468767042522193,
+          -2.3624989449250102,
+          -0.00031656527168341116,
+          1.5696680572903663,
+          0.7853998660558862,
+          0.03999999847548592,
+          0.04000000002805134
+        ],
+        "reset": [
+          0.0,
+          -0.7854,
+          0.0,
+          -2.3562,
+          0.0,
+          1.5708,
+          0.7854,
+          0.04,
+          0.04
+        ],
+        "simulated_seconds": 2
+      },
+      "urdf": {
+        "status": "passed",
+        "source_unchanged": true,
+        "source_sha256": "dee987ca9b5a7e961a6bc87eb71c3b00922968f77214527cddd4cfc860822abc",
+        "downstream_shifts_m": {
+          "Rotation_Pitch": [
+            0.0,
+            0.0,
+            0.05
+          ],
+          "Upper_Arm": [
+            0.0,
+            0.0,
+            0.05
+          ],
+          "Lower_Arm": [
+            0.0,
+            0.0,
+            0.04999999999999999
+          ],
+          "Wrist_Pitch_Roll": [
+            0.0,
+            0.0,
+            0.04999999999999999
+          ],
+          "Fixed_Jaw": [
+            0.0,
+            0.0,
+            0.04999999999999999
+          ],
+          "Moving_Jaw": [
+            0.0,
+            0.0,
+            0.04999999999999999
+          ],
+          "Moving_Jaw_tip": [
+            0.0,
+            0.0,
+            0.04999999999999999
+          ],
+          "Fixed_Jaw_tip": [
+            0.0,
+            0.0,
+            0.04999999999999996
+          ]
+        }
+      },
+      "cube_drop": {
+        "status": "passed",
+        "cases": {
+          "collision": {
+            "final_z_m": 0.019960725160155648,
+            "reset_restored": true
+          },
+          "no_collision": {
+            "final_z_m": -19.339619999999876,
+            "reset_restored": true
+          },
+          "zero_gravity": {
+            "final_z_m": 0.3,
+            "reset_restored": true
+          }
+        }
+      },
+      "compare": {
+        "status": "passed",
+        "scenes": 14,
+        "image_checks_run": true,
+        "checks": {
+          "camera_image_difference": 12.13409423828125,
+          "texture_image_difference": 29.488179524739582,
+          "lighting_image_difference": 11.964701334635416,
+          "fov60_image_difference": 20.144877115885418,
+          "qpos_image_difference": 2.94647216796875
+        }
+      }
+    }
+  },
+  "week07": {
+    "known": {
+      "is_grasped": true,
+      "is_lifted": true,
+      "lift_distance_m": 0.11917370382922424,
+      "stable_hold": true,
+      "hold_samples": 50,
+      "bilateral_contact_fraction": 1.0,
+      "lifted_fraction": 1.0,
+      "minimum_hold_lift_m": 0.11917370382922424,
+      "maximum_hold_speed_m_s": 0.0021484117446389007,
+      "max_tcp_relative_deviation_m": 0.00015425882556109266,
+      "finger_normal_forces_N": {
+        "left_finger": 0.9980098906740907,
+        "right_finger": 0.9980518844554795
+      },
+      "cube_xyz_m": [
+        0.45197702631303355,
+        -1.0556157618071222e-05,
+        0.13913442898937903
+      ],
+      "success": true,
+      "mode": "known",
+      "localization": {
+        "method": "simulator_ground_truth",
+        "position_world_m": [
+          0.4500000000003492,
+          6.108319404676545e-13,
+          0.019960725160154787
+        ]
+      },
+      "rendered": true,
+      "hold_duration_s": 1.0,
+      "object_constraint": "freejoint; contact and gravity only",
+      "mujoco": "3.3.7",
+      "cube_initial_xyz_m": [
+        0.4500000000003492,
+        6.108319404676545e-13,
+        0.019960725160154787
+      ],
+      "release_check": {
+        "object_fell": true,
+        "after_release": {
+          "is_grasped": false,
+          "is_lifted": false,
+          "lift_distance_m": 8.326672684688674e-16,
+          "stable_hold": false,
+          "hold_samples": 0,
+          "bilateral_contact_fraction": 0.0,
+          "lifted_fraction": 0.0,
+          "finger_normal_forces_N": {
+            "left_finger": 0.0,
+            "right_finger": 0.0
+          },
+          "cube_xyz_m": [
+            0.45134301163238016,
+            -1.2875895022165139e-05,
+            0.01996072516015562
+          ],
+          "success": false
+        }
+      }
+    },
+    "vision": {
+      "is_grasped": true,
+      "is_lifted": true,
+      "lift_distance_m": 0.11908161984995277,
+      "stable_hold": true,
+      "hold_samples": 50,
+      "bilateral_contact_fraction": 1.0,
+      "lifted_fraction": 1.0,
+      "minimum_hold_lift_m": 0.11908161984995277,
+      "maximum_hold_speed_m_s": 0.0021091400474707155,
+      "max_tcp_relative_deviation_m": 0.0001737908632286288,
+      "finger_normal_forces_N": {
+        "left_finger": 0.9980033187769125,
+        "right_finger": 0.9980584524624304
+      },
+      "cube_xyz_m": [
+        0.4519767033301343,
+        0.00137879577318011,
+        0.13904234501010757
+      ],
+      "success": true,
+      "mode": "vision",
+      "localization": {
+        "method": "red_color_mask_rgbd",
+        "pixels": 213,
+        "bbox_xyxy": [
+          152,
+          112,
+          166,
+          126
+        ],
+        "center_pixel_uv": [
+          159.0,
+          119.0
+        ],
+        "surface_world_m": [
+          0.4486019718208295,
+          0.0013980281791705108,
+          0.03996673822402952
+        ],
+        "known_half_height_m": 0.02,
+        "position_world_m": [
+          0.4486019718208295,
+          0.0013980281791705108,
+          0.01996673822402952
+        ],
+        "ground_truth_m": [
+          0.4500000000003492,
+          6.108319404676545e-13,
+          0.019960725160154787
+        ],
+        "localization_error_m": 0.00197711955524069
+      },
+      "rendered": true,
+      "hold_duration_s": 1.0,
+      "object_constraint": "freejoint; contact and gravity only",
+      "mujoco": "3.3.7",
+      "cube_initial_xyz_m": [
+        0.4500000000003492,
+        6.108319404676545e-13,
+        0.019960725160154787
+      ],
+      "release_check": {
+        "object_fell": true,
+        "after_release": {
+          "is_grasped": false,
+          "is_lifted": false,
+          "lift_distance_m": 8.569533971325427e-16,
+          "stable_hold": false,
+          "hold_samples": 0,
+          "bilateral_contact_fraction": 0.0,
+          "lifted_fraction": 0.0,
+          "finger_normal_forces_N": {
+            "left_finger": 0.0,
+            "right_finger": 0.0
+          },
+          "cube_xyz_m": [
+            0.45119075958110233,
+            0.001376149145227276,
+            0.019960725160155644
+          ],
+          "success": false
+        }
+      }
+    },
+    "vision-offset": {
+      "is_grasped": true,
+      "is_lifted": true,
+      "lift_distance_m": 0.11914042495607285,
+      "stable_hold": true,
+      "hold_samples": 50,
+      "bilateral_contact_fraction": 1.0,
+      "lifted_fraction": 1.0,
+      "minimum_hold_lift_m": 0.11914042495607285,
+      "maximum_hold_speed_m_s": 0.0021492015023092626,
+      "max_tcp_relative_deviation_m": 0.00015705918795356748,
+      "finger_normal_forces_N": {
+        "left_finger": 0.9978812621576227,
+        "right_finger": 0.9981805247317206
+      },
+      "cube_xyz_m": [
+        0.43133241006252804,
+        0.026379871820548958,
+        0.13910115011622765
+      ],
+      "success": true,
+      "mode": "vision",
+      "localization": {
+        "method": "red_color_mask_rgbd",
+        "pixels": 207,
+        "bbox_xyxy": [
+          145,
+          104,
+          159,
+          117
+        ],
+        "center_pixel_uv": [
+          152.0,
+          110.0
+        ],
+        "surface_world_m": [
+          0.42902957731244235,
+          0.026562535404239706,
+          0.03996673822402952
+        ],
+        "known_half_height_m": 0.02,
+        "position_world_m": [
+          0.42902957731244235,
+          0.026562535404239706,
+          0.01996673822402952
+        ],
+        "ground_truth_m": [
+          0.42999999999999167,
+          0.02499999999986725,
+          0.019960725160154787
+        ],
+        "localization_error_m": 0.0018393676194184251
+      },
+      "rendered": true,
+      "hold_duration_s": 1.0,
+      "object_constraint": "freejoint; contact and gravity only",
+      "mujoco": "3.3.7",
+      "cube_initial_xyz_m": [
+        0.42999999999999167,
+        0.02499999999986725,
+        0.019960725160154787
+      ],
+      "release_check": {
+        "object_fell": true,
+        "after_release": {
+          "is_grasped": false,
+          "is_lifted": false,
+          "lift_distance_m": 8.396061623727746e-16,
+          "stable_hold": false,
+          "hold_samples": 0,
+          "bilateral_contact_fraction": 0.0,
+          "lifted_fraction": 0.0,
+          "finger_normal_forces_N": {
+            "left_finger": 0.0,
+            "right_finger": 0.0
+          },
+          "cube_xyz_m": [
+            0.4306403170808111,
+            0.02636966815995601,
+            0.019960725160155627
+          ],
+          "success": false
+        }
+      }
+    }
+  },
+  "independent_review": {
+    "model": "Astra medium",
+    "tests_passed": 11,
+    "extra_vision_target_xy": [
+      0.47,
+      -0.025
+    ],
+    "extra_vision_result": {
+      "is_grasped": true,
+      "is_lifted": true,
+      "lift_distance_m": 0.11933930665100578,
+      "stable_hold": true,
+      "hold_samples": 50,
+      "bilateral_contact_fraction": 1.0,
+      "lifted_fraction": 1.0,
+      "minimum_hold_lift_m": 0.11933930665100578,
+      "maximum_hold_speed_m_s": 0.0021309504502275045,
+      "max_tcp_relative_deviation_m": 0.00015940861313768907,
+      "finger_normal_forces_N": {
+        "left_finger": 0.9981251488908949,
+        "right_finger": 0.9979366298267511
+      },
+      "cube_xyz_m": [
+        0.4718340026652132,
+        -0.025015894757659782,
+        0.13930003181116057
+      ],
+      "success": true,
+      "mode": "vision",
+      "localization": {
+        "method": "red_color_mask_rgbd",
+        "pixels": 196,
+        "bbox_xyxy": [
+          160,
+          122,
+          173,
+          135
+        ],
+        "center_pixel_uv": [
+          166.5,
+          128.5
+        ],
+        "surface_world_m": [
+          0.46957239450838717,
+          -0.025164507225069195,
+          0.03996673822402952
+        ],
+        "known_half_height_m": 0.02,
+        "position_world_m": [
+          0.46957239450838717,
+          -0.025164507225069195,
+          0.01996673822402952
+        ],
+        "ground_truth_m": [
+          0.4699999999999938,
+          -0.024999999999885295,
+          0.019960725160154787
+        ],
+        "localization_error_m": 0.0004581978181168326
+      },
+      "rendered": true,
+      "hold_duration_s": 1.0,
+      "object_constraint": "freejoint; contact and gravity only",
+      "mujoco": "3.3.7",
+      "cube_initial_xyz_m": [
+        0.4699999999999938,
+        -0.024999999999885295,
+        0.019960725160154787
+      ],
+      "release_check": {
+        "object_fell": true,
+        "after_release": {
+          "is_grasped": false,
+          "is_lifted": false,
+          "lift_distance_m": 8.673617379884035e-16,
+          "stable_hold": false,
+          "hold_samples": 0,
+          "bilateral_contact_fraction": 0.0,
+          "lifted_fraction": 0.0,
+          "finger_normal_forces_N": {
+            "left_finger": 0.0,
+            "right_finger": 0.0
+          },
+          "cube_xyz_m": [
+            0.47103249238125317,
+            -0.02501020581636524,
+            0.019960725160155655
+          ],
+          "success": false
+        }
+      }
+    },
+    "geometry_and_invalid_input_checks": "passed"
+  },
+  "interactive_viewer": {
+    "command": "python3 run.py scene --human --seconds 2 --output outputs/viewer-smoke",
+    "status": "passed"
+  },
+  "limitations": [
+    "Windows/Linux/Python3.12 not executed locally; CI not run remotely",
+    "CGL ARB_clip_control warning; finite depth precision",
+    "single red flat cube with known height; no YOLO/banana task",
+    "linear path without collision planning; validated workspace only"
+  ]
+}

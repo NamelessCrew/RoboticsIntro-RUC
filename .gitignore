@@ -11,3 +11,7 @@ __pycache__/
 *.convex.stl
 .idea/
 .vscode/
+
+MUJOCO_LOG.TXT
+
+.python-runtime/

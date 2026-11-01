@@ -1,0 +1,35 @@
+name: MuJoCo lessons
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  physics:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ['3.11', '3.12']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python scripts/setup_env.py
+      - run: python run.py doctor
+      - run: python run.py test
+      - run: python run.py suite --no-render
+  render-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri libopengl0
+      - run: python scripts/setup_env.py
+      - run: xvfb-run -a python run.py suite
+      - run: xvfb-run -a python run.py vision-grasp --release-check
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mujoco-render-results
+          path: outputs/
