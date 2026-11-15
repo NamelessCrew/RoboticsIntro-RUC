@@ -28,7 +28,8 @@ class CartesianController:
         self.qtarget = env.qpos[:7].copy()
         self.limits = env.model.jnt_range[env.joint_ids[:7]]
 
-    def inverse_kinematics(self, target):
+    def inverse_kinematics(self, target, *, rotation=None):
+        rotation = self.rotation if rotation is None else rotation
         model, data = self.env.model, self.ik_data
         data.qpos[:] = self.env.data.qpos
         data.qpos[self.qadr] = self.qtarget
@@ -37,7 +38,7 @@ class CartesianController:
             mujoco.mj_forward(model, data)
             current_R = data.site("tcp").xmat.reshape(3, 3)
             position_error = np.asarray(target)-data.site("tcp").xpos
-            rotation_error = orientation_error(current_R, self.rotation)
+            rotation_error = orientation_error(current_R, rotation)
             error = np.r_[position_error, rotation_error]
             if np.linalg.norm(position_error) < .0001 and np.linalg.norm(rotation_error) < .001:
                 break
@@ -48,14 +49,14 @@ class CartesianController:
         mujoco.mj_forward(model, data)
         residual = float(np.linalg.norm(np.asarray(target)-data.site("tcp").xpos))
         current_R = data.site("tcp").xmat.reshape(3, 3)
-        rotation_residual = float(np.linalg.norm(orientation_error(current_R, self.rotation)))
+        rotation_residual = float(np.linalg.norm(orientation_error(current_R, rotation)))
         if residual > .005 or rotation_residual > .01:
             raise ValueError(f"IK target unreachable or failed: position={residual:.4f} m, orientation={rotation_residual:.4f} rad")
         self.qtarget = data.qpos[self.qadr].copy()
         return self.qtarget
 
-    def move_to(self, xyz, gripper_open):
-        q = self.inverse_kinematics(xyz)
+    def move_to(self, xyz, gripper_open, *, rotation=None):
+        q = self.inverse_kinematics(xyz, rotation=rotation)
         # 位置PD执行器会通过力矩驱动关节，物体始终只由接触力/重力驱动。
         self._step(np.r_[q, 255. if gripper_open else 0.])
 

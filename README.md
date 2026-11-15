@@ -1,10 +1,10 @@
 # RoboticsIntro-RUC · MuJoCo
 
-中国人民大学《机器人导论》课程配套实验：**第六周“仿真平台”＋第七周“机械臂抓取实践”**。本分支 `RoboticsIntro-RUC-mujoco` 使用原生 MuJoCo，默认机器人是 Franka Panda；SO100 的本地 URDF、网格和许可证保留用于模型导入实验。
+中国人民大学《机器人导论》课程配套实验：**第六周“仿真平台”、第七周“机械臂抓取实践”、第十一周“键盘遥操作”**。本分支使用原生 MuJoCo，默认机器人是 Franka Panda。SO100 的本地 URDF、网格和许可证用于模型导入实验。
 
 ![Panda 仿真场景](docs/images/baseline.png)
 
-课程入口：[第六周教程](docs/week06.md) · [第七周教程](docs/week07.md) · [第七周 40 页课件文字稿](docs/week07-slides.md) · [迁移计划与教材对照](docs/migration-plan.md) · [验证记录](docs/validation.md)。
+课程入口：[第六周教程](docs/week06.md) · [第七周教程](docs/week07.md) · [第十一周键盘遥操作](chapters/week11/README.md) · [第七周 40 页课件文字稿](docs/week07-slides.md) · [迁移计划与教材对照](docs/migration-plan.md) · [验证记录](docs/validation.md)。
 
 ## 安装
 
@@ -13,11 +13,11 @@
 下载本分支（ZIP 请在 GitHub 切到该分支后下载）：
 
 ```text
-git clone --branch RoboticsIntro-RUC-mujoco https://github.com/NamelessCrew/RoboticsIntro-RUC.git
+git clone --branch week11-keyboard-teleop https://github.com/NamelessCrew/RoboticsIntro-RUC.git
 cd RoboticsIntro-RUC
 ```
 
-分支提交推送前，上述远程命令无法取得本地改动；已有课程目录请直接使用当前工作副本。模型随仓库提供，运行实验不下载模型或权重。
+模型随仓库提供，运行实验无需另行下载模型或权重。
 
 **Windows PowerShell 或 cmd**：先安装 [Python 3.11 64 位](https://www.python.org/downloads/)（启用 Python Launcher），打开仓库目录执行：
 
@@ -53,7 +53,7 @@ python3 run.py vision-grasp
 
 交互查看：`python run.py scene --human --seconds 30`。Windows 可把 `python` 替换成 `py -3.11`；macOS 运行器会自动调用 `mjpython`，满足 MuJoCo 查看器的主线程要求。关闭窗口或到时退出。课上主要结果是保存的图像与数据，交互窗口验证单独记在验证记录中。
 
-## 两周实验
+## 实验命令
 
 以下命令均在仓库根目录执行。Windows 可用 `py -3.11 run.py` 替换 `python run.py`。
 
@@ -73,6 +73,8 @@ python3 run.py vision-grasp
 | 第六周完整验证 | `python run.py suite` |
 | 已知位置抓取基线 | `python run.py grasp --release-check` |
 | RGB-D 定位后抓取 | `python run.py vision-grasp` |
+| 键盘遥操作 | `python run.py teleop --human` |
+| 遥操作自动验收 | `python run.py teleop --check` |
 | 移动物体后再定位 | `python run.py vision-grasp --cube-x 0.43 --cube-y 0.025` |
 | 夹爪张开的失败对照 | `python run.py grasp --keep-open` |
 | 物理与数值回归测试 | `python run.py test` |
@@ -80,6 +82,10 @@ python3 run.py vision-grasp
 `--output outputs/my_attempt` 更改输出根目录。第六周命令会在其下创建实验子目录；抓取命令直接写入所指定目录。原有 `official`（ManiSkill 随机动作体验）由可评估的 `grasp` 任务替代；不再运行官方 PickCube 任务。
 
 相机、姿态、灯光预设集中在 [experiments.py](chapters/week06/experiments.py) 的 `CASES`。纹理首次生成于 `.cache/week06/checkerboard.png`，以后保留学生替换的图片。也可指定 `python run.py scene --case texture --texture "C:/class/my floor.png"`；路径含空格请加引号。纹理只影响外观，地面摩擦不变。
+
+## 第十一周 · Panda 键盘遥操作
+
+在仓库根目录运行 `python run.py teleop --human`，点击 MuJoCo 窗口后按住 Q，观察夹爪沿世界 +Z 抬升。完整键位、代码主线和实测验收说明见[第十一周 README](chapters/week11/README.md)。
 
 ## 输出与接口
 

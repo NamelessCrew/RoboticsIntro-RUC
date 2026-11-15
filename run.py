@@ -14,7 +14,7 @@ def main(argv=None):
     if not python.is_file():
         raise SystemExit("未找到 .venv。先按 README 安装：py -3.11 scripts/setup_env.py (Windows) 或 python3.11 scripts/setup_env.py (macOS/Linux)。")
     environment = None
-    if "--human" in args and sys.platform == "darwin":
+    if "--human" in args and command != "teleop" and sys.platform == "darwin":
         # Standalone CPython may link libpython relative to its executable.
         # mjpython's trampoline runs in an app bundle; preserve the real base lib.
         base_lib = Path(subprocess.check_output([str(python), "-c", "import sys; from pathlib import Path; print(Path(sys.base_prefix)/'lib')"], text=True).strip())
@@ -29,6 +29,8 @@ def main(argv=None):
         target = ["-m", "unittest", "discover", "-s", "tests", "-v", *args]
     elif command == "python":
         target = args
+    elif command == "teleop":
+        target = ["-m", "chapters.week11.teleop", *args]
     elif command in ("grasp", "vision-grasp"):
         target = ["-m", "chapters.week07.grasp", "--mode", "vision" if command == "vision-grasp" else "known", *args]
     else:
