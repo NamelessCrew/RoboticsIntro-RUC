@@ -21,10 +21,16 @@
 
 A 键长按约 0.5 秒：窗口 TCP 的 Y 从约 −0.007 m 增至 0.032 m，松手后保持。K 持续按住只切换一次；R 保留当前位置和朝向，清除运动指令并张开夹爪。这里的 R 不代表回到初始关节姿态。
 
-物理自检中，Q 抬升最终约 41.1 mm，松键后的漂移约 0.63 mm；旋转约 ±15°，TCP 位移约 3.35–3.56 mm。控制目标与物理执行之间存在跟踪误差，不能把目标更新值等同于每帧实测位移。
+物理自检中，Q 抬升最终约 41.1 mm，横向偏差约 0.63 mm，最后 0.5 秒位移波动约 0 mm；旋转约 ±15°，TCP 位移约 3.35–3.56 mm。控制目标与物理执行之间存在跟踪误差，不能把目标更新值等同于每帧实测位移。
 
 ## 适用范围
 
 本记录直接证明上述 macOS / Python 3.12 环境可从全新副本安装和运行。Windows、Linux 和 Python 3.11 已配置自动检查，但发布前尚未在本次验收中执行，不能据此声称这些组合已实测通过。交互窗口还需要本机桌面与可用的 OpenGL 驱动；无图形界面的服务器可以运行物理自检，但不能据此判断窗口可用。
 
 学生操作步骤以[根目录 README](../README.md)和[第十一周教程](../chapters/week11/README.md)为准。
+
+## 发布后复核
+
+已通过本机 SSH 认证账户 `yizhuo1214` 推送至 `week11-keyboard-teleop`。随后从 GitHub 通过 HTTPS 克隆提交 `5b94dbf6ee9c7145f4edfe3e6586930b1d99b9af`，核对内容与本地一致，再执行 `bash setup.sh`、`bash run.sh teleop --check` 和 `bash run.sh teleop --smoke-test`：全部通过，图形自检渲染 73 帧并正常关闭。
+
+[GitHub Actions 运行记录](https://github.com/NamelessCrew/RoboticsIntro-RUC/actions/runs/44560109752)显示账户计费问题导致任务未启动（`The job was not started because your account is locked due to a billing issue.`）。各系统检查没有执行测试步骤，因此本次发布不能声称 Windows/Linux CI 已通过；此平台限制不影响代码下载与本机运行。
