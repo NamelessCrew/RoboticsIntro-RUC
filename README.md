@@ -4,7 +4,7 @@
 
 ![Panda 仿真场景](docs/images/baseline.png)
 
-课程入口：[第六周教程](docs/week06.md) · [第七周教程](docs/week07.md) · [第十一周键盘遥操作](chapters/week11/README.md) · [第七周 40 页课件文字稿](docs/week07-slides.md) · [迁移计划与教材对照](docs/migration-plan.md) · [验证记录](docs/validation.md)。
+课程入口：[第六周教程](docs/week06.md) · [第七周教程](docs/week07.md) · [第十一周键盘遥操作](chapters/week11/README.md) · [第七周 40 页课件文字稿](docs/week07-slides.md) · [迁移计划与教材对照](docs/migration-plan.md) · [验证记录](docs/validation.md) · [第十一周全新安装验收](docs/week11-validation.md)。
 
 ## 第十一周：第一次下载到开始遥操
 
@@ -60,9 +60,9 @@ cd RoboticsIntro-RUC
 .\run.cmd vision-grasp
 ```
 
-也可使用 `setup.cmd`、`run.cmd scene`。PowerShell 使用 `.\setup.cmd`、`.\run.cmd scene`。提供 `.ps1` 便利入口；若系统阻止脚本执行，直接运行上述 `py` 命令即可。
+也可使用 `setup.cmd`、`run.cmd scene`。PowerShell 使用 `.\setup.cmd`、`.\run.cmd scene`。提供 `.ps1` 便利入口；若系统阻止 `.ps1` 脚本执行，直接使用上述 `.cmd` 命令即可。
 
-**macOS / Linux**：安装 Python 3.11，然后执行：
+**macOS / Linux**：安装 Python 3.11 或 3.12，然后执行：
 
 ```bash
 bash setup.sh
@@ -76,7 +76,7 @@ python3 run.py vision-grasp
 
 | 系统 | 当前验证范围 |
 | --- | --- |
-| macOS Apple Silicon | Python 3.11.14、MuJoCo 3.3.7：物理、RGB-D、完整实验与真实接触抓取已执行 |
+| macOS Apple Silicon | Python 3.11.14：原有实验已执行；Python 3.12.8 / MuJoCo 3.3.7：第十一周全新安装、16 项测试、遥操与窗口已实测 |
 | Windows x64 | 已提供原生 Python / cmd / PowerShell 入口与 CI 配置；当前机器未实测 |
 | Linux x64 | 已提供原生入口与 CI 配置；当前机器未实测 |
 
