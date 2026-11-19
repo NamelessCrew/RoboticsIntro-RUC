@@ -66,7 +66,9 @@ class PandaTeleop:
             self.controller.hold(gripper_open=True)
             return
         # K 只在刚按下的一轮切换，持续按住时保留同一个目标。
-        if gripper_key_down and not self.gripper_key_was_down:
+        was_down = self.gripper_key_was_down
+        pressed_now = gripper_key_down and not was_down
+        if pressed_now:
             self.gripper_open = not self.gripper_open
         self.gripper_key_was_down = gripper_key_down
 
@@ -92,12 +94,13 @@ class PandaTeleop:
         rotation = self.rotation
         if angular_direction is not None and angular_direction.any():
             magnitude = np.linalg.norm(angular_direction)
+            axis = angular_direction / magnitude
+            angle = ANGULAR_SPEED * magnitude * self.dt
             quat, matrix = np.empty(4), np.empty(9)
-            mujoco.mju_axisAngle2Quat(
-                quat, angular_direction / magnitude, ANGULAR_SPEED * magnitude * self.dt
-            )
+            mujoco.mju_axisAngle2Quat(quat, axis, angle)
             mujoco.mju_quat2Mat(matrix, quat)
-            rotation = matrix.reshape(3, 3) @ self.rotation
+            delta_rotation = matrix.reshape(3, 3)
+            rotation = delta_rotation @ self.rotation
 
         # 3. 用作业已有的 IK 和关节 PD 执行；停下时继续保持目标。
         if np.array_equal(candidate, self.target) and rotation is self.rotation:
@@ -116,7 +119,7 @@ class PandaTeleop:
             self.rotation = rotation
 
 
-def run_window(teleop):
+def run_window(teleop, *, duration=None):
     """GLFW 提供持续的按键状态，MuJoCo 渲染同一个仿真场景。"""
     if not glfw.init():
         raise RuntimeError("无法初始化 GLFW，请在桌面会话中运行。")
@@ -149,6 +152,8 @@ def run_window(teleop):
         clear_was_down = False
         require_release = False
         control_keys = (*KEY_DIRECTIONS, *KEY_ROTATIONS, "K")
+        opened_at = time.monotonic()
+        rendered_frames = 0
         while not glfw.window_should_close(window):
             start = time.monotonic()
             glfw.poll_events()
@@ -192,7 +197,14 @@ def run_window(teleop):
                                     mujoco.mjtGridPos.mjGRID_TOPLEFT, viewport,
                                     "Move W/S A/D Q/E | Rotate Z/X T/G C/V | K Grip | R Clear", line, context)
                 glfw.swap_buffers(window)
+                rendered_frames += 1
+            if duration is not None and time.monotonic() - opened_at >= duration:
+                break
             time.sleep(max(0, teleop.dt - (time.monotonic() - start)))
+        if duration is not None:
+            if not rendered_frames:
+                raise RuntimeError("图形自检未渲染任何画面，请在本机桌面环境运行。")
+            print(f"图形自检通过：已打开 GLFW 窗口并渲染 {rendered_frames} 帧，窗口已自动关闭。", flush=True)
     finally:
         if context is not None:
             context.free()
@@ -312,6 +324,7 @@ def main(argv=None):
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--human", action="store_true", help="打开键盘遥操窗口")
     mode.add_argument("--check", action="store_true", help="验收平移、旋转、停稳和夹爪开合")
+    mode.add_argument("--smoke-test", action="store_true", help="打开图形窗口约两秒，验证渲染后自动关闭")
     parser.add_argument("--output", type=Path, default=Path("outputs/week11"))
     args = parser.parse_args(argv)
     with make_env() as env:
@@ -321,7 +334,7 @@ def main(argv=None):
             check_full_controls(env, args.output)
             check_rotations(env, args.output)
         else:
-            run_window(teleop)
+            run_window(teleop, duration=2.0 if args.smoke_test else None)
 
 
 if __name__ == "__main__":

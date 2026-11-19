@@ -1,3 +1,3 @@
 Set-Location $PSScriptRoot
-py -3.11 scripts/setup_env.py
+& "$PSScriptRoot/setup.cmd"
 exit $LASTEXITCODE

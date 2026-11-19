@@ -16,6 +16,7 @@ jobs:
       - run: python scripts/setup_env.py
       - run: python run.py doctor
       - run: python run.py test
+      - run: python run.py teleop --check
       - run: python run.py suite --no-render
   render-linux:
     runs-on: ubuntu-latest
@@ -28,6 +29,7 @@ jobs:
       - run: python scripts/setup_env.py
       - run: xvfb-run -a python run.py suite
       - run: xvfb-run -a python run.py vision-grasp --release-check
+      - run: xvfb-run -a python run.py teleop --smoke-test
       - uses: actions/upload-artifact@v4
         if: always()
         with:

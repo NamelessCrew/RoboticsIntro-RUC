@@ -6,6 +6,37 @@
 
 课程入口：[第六周教程](docs/week06.md) · [第七周教程](docs/week07.md) · [第十一周键盘遥操作](chapters/week11/README.md) · [第七周 40 页课件文字稿](docs/week07-slides.md) · [迁移计划与教材对照](docs/migration-plan.md) · [验证记录](docs/validation.md)。
 
+## 第十一周：第一次下载到开始遥操
+
+先安装 **64 位 Python 3.11 或 3.12** 和 Git。首次安装需要联网下载依赖；打开窗口需要本机桌面与可用的 OpenGL 驱动。模型已包含在仓库中，无需另外安装 Isaac Lab、ROS、CUDA 或下载权重。
+
+```bash
+git clone --branch week11-keyboard-teleop --single-branch https://github.com/NamelessCrew/RoboticsIntro-RUC.git
+cd RoboticsIntro-RUC
+```
+
+然后只选择自己系统对应的一组命令：
+
+**macOS / Linux**
+
+```bash
+bash setup.sh
+bash run.sh teleop --check
+bash run.sh teleop --human
+```
+
+**Windows PowerShell**
+
+```powershell
+.\setup.cmd
+.\run.cmd teleop --check
+.\run.cmd teleop --human
+```
+
+安装器自动创建仓库内的 `.venv`，后续入口直接使用这个环境，不需要手动激活。点击仿真窗口后，按住 **A** 半秒再松开，观察左上角 `TCP (m)` 的第二项 Y 增加并停稳。**Esc** 退出。完整键位与四步代码说明见[第十一周 README](chapters/week11/README.md)。
+
+仅检查窗口能否打开并渲染：运行 `bash run.sh teleop --smoke-test`（Windows 用 `.\run.cmd teleop --smoke-test`），约两秒后自动退出。`--check` 验证物理控制，`--smoke-test` 验证当前电脑的图形窗口，两项分别报告结果。
+
 ## 安装
 
 需要 **64 位 Python 3.11 或 3.12**。建议全班统一 3.11。MuJoCo 的 pip 包自带引擎，无需另外安装 MuJoCo、Vulkan、CUDA、PyTorch 或 ROS。保存图片仍需要 OpenGL 图形上下文。
@@ -22,11 +53,11 @@ cd RoboticsIntro-RUC
 **Windows PowerShell 或 cmd**：先安装 [Python 3.11 64 位](https://www.python.org/downloads/)（启用 Python Launcher），打开仓库目录执行：
 
 ```powershell
-py -3.11 scripts/setup_env.py
-py -3.11 run.py doctor
-py -3.11 run.py scene
-py -3.11 run.py grasp --release-check
-py -3.11 run.py vision-grasp
+.\setup.cmd
+.\run.cmd doctor
+.\run.cmd scene
+.\run.cmd grasp --release-check
+.\run.cmd vision-grasp
 ```
 
 也可使用 `setup.cmd`、`run.cmd scene`。PowerShell 使用 `.\setup.cmd`、`.\run.cmd scene`。提供 `.ps1` 便利入口；若系统阻止脚本执行，直接运行上述 `py` 命令即可。
@@ -34,7 +65,7 @@ py -3.11 run.py vision-grasp
 **macOS / Linux**：安装 Python 3.11，然后执行：
 
 ```bash
-python3.11 scripts/setup_env.py
+bash setup.sh
 python3 run.py doctor
 python3 run.py scene
 python3 run.py grasp --release-check
@@ -85,7 +116,7 @@ python3 run.py vision-grasp
 
 ## 第十一周 · Panda 键盘遥操作
 
-在仓库根目录运行 `python run.py teleop --human`，点击 MuJoCo 窗口后按住 Q，观察夹爪沿世界 +Z 抬升。完整键位、代码主线和实测验收说明见[第十一周 README](chapters/week11/README.md)。
+在仓库根目录运行 `bash run.sh teleop --human`（Windows 用 `.\run.cmd teleop --human`），点击 MuJoCo 窗口后按住 A，观察夹爪沿世界 +Y 移动。完整键位、代码主线和实测验收说明见[第十一周 README](chapters/week11/README.md)。
 
 ## 输出与接口
 

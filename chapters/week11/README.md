@@ -1,26 +1,37 @@
 # 第十一周 · 搭建 Panda 键盘遥操作
 
-本实验复用第七周的 MuJoCo 抓取场景和 Panda 控制器。先用 Q 让夹爪抬升并停稳，再组合位置、朝向和开合指令，完成一次方块抓放。
+本实验复用第七周的 MuJoCo 抓取场景和 Panda 控制器。先用 A/D 沿世界 Y 轴移动并停稳，再组合位置、朝向和开合指令，完成一次方块抓放。
 
 ## 启动仿真
 
-在仓库根目录执行。已完成[课程环境安装](../../README.md#安装)的同学可以直接运行第二行。
+先安装 64 位 Python 3.11 或 3.12 和 Git。首次安装需联网；交互窗口需要桌面环境与 OpenGL 驱动。模型已随仓库提供。
+
+```bash
+git clone --branch week11-keyboard-teleop --single-branch https://github.com/NamelessCrew/RoboticsIntro-RUC.git
+cd RoboticsIntro-RUC
+```
+
+在仓库根目录执行下面对应系统的命令。已安装环境时可跳过第一行；无需激活虚拟环境。
 
 **macOS / Linux**
 
 ```bash
-python3.11 scripts/setup_env.py
-python3 run.py teleop --human
+bash setup.sh
+bash run.sh teleop --check
+bash run.sh teleop --human
 ```
 
 **Windows**
 
 ```powershell
-py -3.11 scripts/setup_env.py
-py -3.11 run.py teleop --human
+.\setup.cmd
+.\run.cmd teleop --check
+.\run.cmd teleop --human
 ```
 
-点击仿真窗口取得焦点。按住 **Q** 约半秒再松手，观察窗口左上角的末端位置 `TCP (m)`。第三个数是世界坐标下的高度 Z。松手后位移会继续增加一小段，等读数稳定再比较起点和终点。
+点击仿真窗口取得焦点。按住 **A** 约半秒再松手，观察窗口左上角的末端位置 `TCP (m)`。第二个数是世界坐标下的 Y，A 增大 Y，D 减小 Y。松手后位移会继续增加一小段，等读数稳定再比较起点和终点。方向固定在世界坐标系中，与画面里的左右分别定义。
+
+`--check` 全部通过后，终端应报告六方向、组合键、三轴旋转及夹爪开合通过，并生成下文的 CSV。检查通过后再打开 `--human`。需要单独核对图形环境时，将 `--human` 换成 `--smoke-test`，窗口渲染约两秒后自动关闭。
 
 ## 键位
 
@@ -38,23 +49,23 @@ py -3.11 run.py teleop --human
 | R | 清零平移速度，保持上一次有效位姿目标，并发出张开夹爪的指令。松开所有操作键后再继续。 |
 | Esc | 关闭仿真窗口，返回终端。要恢复场景初始状态，重新执行启动命令。 |
 
-## 从 Q 到夹爪抬升
+## 从 A 到末端沿世界 +Y 移动
 
 1. **读键。** [`teleop.py`](teleop.py) 的 `run_window()` 每轮处理窗口事件，再读哪些键当前按下。
-2. **查方向。** `read_direction()` 把 Q 映射为 `(0, 0, 1)`，即世界 +Z。组合键的方向向量相加并限制长度，同时按 Q 和 E 会抵消。
+2. **查方向。** `read_direction()` 把 A 映射为 `(0, 1, 0)`，即世界 +Y。组合键的方向向量相加并限制长度，同时按 A 和 D 会抵消输入方向。
 3. **更新目标。** `PandaTeleop.step()` 用方向更新速度，再以「速度 × 控制周期」求这一轮的位移。松手后速度逐轮衰减，低于阈值时归零。按 C 时改为计算绕世界 Z 轴的朝向增量。按 K 时用前后两轮的按键状态判断是否刚按下。
 4. **执行目标。** [`CartesianController`](../week07/controller.py) 用逆运动学求关节目标，再由 MuJoCo 的关节位置 PD 跟踪。窗口显示的是仿真中实际的末端位置，跟踪过程中会与目标值有差别。
 
 ## 练习与验收
 
-- 单独试 Q、C 和 K，依次观察松手后停稳、朝向保持和长按只切换一次。
+- 单独试 A、C 和 K，依次观察松手后停稳、朝向保持和长按只切换一次。再把同一平移过程扩展到 Q/E 和 W/S。
 - 用平移把夹爪移到方块上方，用旋转让两指对准方块两侧。降低高度后按 K 夹紧，再抬起、横移、放下并用 K 松开。
 - 夹爪空着时试按 R，观察它张开并保持上一次有效位姿目标。松开操作键，再试一次平移。
 
-可在无图形窗口的环境下执行自动验收。Windows 将命令中的 `python3` 换成 `py -3.11`。
+可在无图形窗口的环境下执行自动验收。macOS/Linux 使用下面的命令，Windows 改为 `.\run.cmd teleop --check`。
 
 ```bash
-python3 run.py teleop --check
+bash run.sh teleop --check
 ```
 
 输出目录默认为 `outputs/week11/`，可用 `--output` 指定其他路径。
@@ -66,3 +77,24 @@ python3 run.py teleop --check
 | `rotations.csv` | 查看三轴正反转的实际转角和末端位置漂移。 |
 
 自动验收也检查 K 的开合、长按保持和 R 的清除逻辑。综合抓放在仿真窗口里验收，以方块被夹起并放到新位置为准。
+
+## 代码与课件的对应
+
+- 键位表与 `read_direction()`：按键如何变成方向。
+- `PandaTeleop.step()`：`velocity`、`candidate` 更新位置，`axis`、`angle`、`delta_rotation` 更新朝向。
+- `was_down`、`pressed_now`：从持续状态识别 K 的一次新按下，避免长按反复开合。
+- `run_window()`：刷新事件、读键、执行一次控制，再显示实际 TCP 坐标。`is_down("A")` 的返回值可作为读键观察示例，源码由 `read_direction()` 统一查询各键。
+
+课件节选了主线，完整程序还包括速度/高度限制、R 的释放等待、窗口焦点检查和 IK 失败时保持目标等分支。
+
+## 常见启动问题
+
+| 现象 | 处理 |
+| --- | --- |
+| 没有 `run.sh` / `setup.cmd`，或找不到 `chapters/week11` | 检查是否下载了 `week11-keyboard-teleop` 分支，并进入包含 `run.py` 的仓库目录。 |
+| 系统默认 Python 是 3.13/3.14 | 安装 64 位 3.11 或 3.12，再运行安装入口。安装器会查找这些已安装版本。 |
+| 找不到 `.venv` | 先成功执行 `setup.sh` / `setup.cmd`。不要把其他电脑的 `.venv` 复制过来。 |
+| 依赖下载失败 | 检查网络与 pip 软件源，按原命令重试。不要删除固定依赖版本绕过错误。 |
+| 物理检查通过，窗口打不开 | 运行 `--smoke-test` 检查图形环境；远程无桌面时不能操作 GLFW 窗口，Windows 需安装显卡驱动。 |
+| 窗口已打开，按键没反应 | 先点击仿真窗口，切换到英文输入状态，再按 A/D；在终端里按键不会控制窗口。 |
+| 想恢复初始场景 | 用 Esc 退出后重新执行 `--human`；R 清除指令并张开夹爪，不会重置场景。 |
